@@ -8,7 +8,7 @@ defmodule Claude do
   @api_url "https://api.anthropic.com/v1/messages"
 
   def start do
-    IO.puts("Chatbot initialized. Type 'exit' to end the conversation.")
+    IO.puts(green() <> "Chatbot initialized. Type 'exit' to end the conversation.")
     chat_loop()
   end
 
