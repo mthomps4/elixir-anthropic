@@ -3,6 +3,8 @@ defmodule Claude do
     Chat with Claude CLI
   """
 
+  import IO.ANSI
+
   @api_url "https://api.anthropic.com/v1/messages"
 
   def start do
@@ -11,17 +13,17 @@ defmodule Claude do
   end
 
   defp chat_loop do
-    input = IO.gets("You: ") |> String.trim()
+    input = IO.gets(cyan() <> "You: " <> reset()) |> String.trim()
 
     if input == "exit" do
-      IO.puts("Chatbot: Goodbye!")
+      IO.puts(yellow() <> "Chatbot: " <> reset() <> "Goodbye!")
     else
       case request_completion(input) do
         {:ok, response} ->
-          IO.puts("Claude: #{response}")
+          IO.puts(yellow() <> "Claude: " <> reset() <> "#{response}")
 
         {:error, response} ->
-          IO.puts("Error: #{inspect(response)}")
+          IO.puts(red() <> "Error: #{inspect(response)}")
       end
 
       chat_loop()
@@ -48,7 +50,7 @@ defmodule Claude do
         ]
       })
 
-    case HTTPoison.post(@api_url, body, headers) do
+    case HTTPoison.post(@api_url, body, headers, recv_timeout: 120_000) do
       {:ok, %{status_code: 200, body: response_body}} ->
         {:ok, extract_response(response_body)}
 
